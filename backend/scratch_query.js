@@ -7,6 +7,7 @@ import Order from './models/Order.js';
 import Cart from './models/Cart.js';
 import Address from './models/Address.js';
 import Product from './models/Product.js';
+import Category from './models/Category.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,8 +21,13 @@ const run = async () => {
     await mongoose.connect(mongoUri);
 
     console.log("Fetching all products...");
-    const products = await Product.find({}, 'title stock status price discountPrice');
+    const products = await Product.find({}, 'title images');
+    console.log("Products:");
     console.log(JSON.stringify(products, null, 2));
+
+    console.log("Categories:");
+    const categories = await Category.find({}, 'name image');
+    console.log(JSON.stringify(categories, null, 2));
 
     process.exit(0);
   } catch (err) {

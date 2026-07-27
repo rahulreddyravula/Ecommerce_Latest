@@ -37,11 +37,13 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // 1. Security Headers
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' }
+}));
 
 // 2. CORS setup
 app.use(cors({
-  origin: '*', // Allow all origins for local testing, can customize in prod
+  origin: process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : ['http://localhost:5173', 'http://127.0.0.1:5173'],
   credentials: true
 }));
 
