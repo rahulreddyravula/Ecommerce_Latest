@@ -43,15 +43,21 @@ export const register = async (req, res, next) => {
     const normalizedEmail = email.trim().toLowerCase();
     const normalizedPhone = normalizePhone(phone);
 
-    // Try starting a transaction session
-    let useTransaction = true;
-    try {
-      session = await mongoose.startSession();
-      session.startTransaction();
-    } catch (err) {
-      useTransaction = false;
-      if (session) session.endSession();
-      session = null;
+    // Try starting a transaction session if database topology supports it
+    let useTransaction = false;
+    const topologyType = mongoose.connection?.client?.topology?.description?.type;
+    const supportsTransactions = topologyType && topologyType !== 'Single' && topologyType !== 'Unknown';
+
+    if (supportsTransactions) {
+      try {
+        session = await mongoose.startSession();
+        session.startTransaction();
+        useTransaction = true;
+      } catch (err) {
+        useTransaction = false;
+        if (session) session.endSession();
+        session = null;
+      }
     }
 
     // Check if user already exists

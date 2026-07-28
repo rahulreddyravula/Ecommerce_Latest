@@ -1,1 +1,5 @@
 [2026-07-27T12:40:38.399Z] [AUTH_FAIL_NON_EXISTENT_EMAIL] {"email":"user@example.com","ip":"::1"}
+[2026-07-28T05:14:46.524Z] [USER_REGISTERED] {"userId":"6a683ac639496b12ee78a23f","email":"ravularahulreddy@gmail.com","ip":"::1"}
+[2026-07-28T05:15:11.715Z] [EMAIL_VERIFICATION_SUCCESS_OTP] {"userId":"6a683ac639496b12ee78a23f"}
+[2026-07-28T05:15:41.352Z] [AUTH_SUCCESS] {"userId":"6a683ac639496b12ee78a23f","ip":"::1"}
+[2026-07-28T05:18:29.741Z] [LOGOUT_SUCCESS] {"userId":"6a683ac639496b12ee78a23f"}
