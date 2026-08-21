@@ -63,7 +63,7 @@ export const apiCall = async (endpoint, options = {}) => {
     const response = await fetch(url, mergedOptions);
     
     // Check if unauthorized and try token refresh, but NOT for auth endpoints
-    if (response.status === 401 && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/refresh-token') && !endpoint.includes('/auth/verify-mfa')) {
+    if (response.status === 401 && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/refresh-token') && !endpoint.includes('/auth/verify-mfa') && !endpoint.includes('/auth/logout')) {
       if (isRefreshing) {
         // Enqueue request while token is refreshing
         return new Promise((resolve, reject) => {

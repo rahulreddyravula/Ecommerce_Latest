@@ -26,8 +26,8 @@ const seedAdmin = async () => {
       const adminUser = new User({
         name: 'System Administrator',
         email: adminEmail,
-        password: 'password123',
-        phone: '+1234567890',
+        password: 'password12345',
+        phone: '+19876543210',
         role: 'Admin',
         isVerified: true
       });

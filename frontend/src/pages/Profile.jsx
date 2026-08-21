@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Phone, Shield, UserCheck, AlertOctagon } from 'lucide-react';
+import { User, Mail, Phone, Shield, UserCheck, AlertOctagon, CheckCircle } from 'lucide-react';
 
 export default function Profile() {
   const { user, updateProfile, uploadAvatar } = useAuth();
@@ -124,7 +124,44 @@ export default function Profile() {
           </div>
 
           <div style={{ borderTop: '1px solid var(--border)', marginTop: '2rem', paddingTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '12px', textAlign: 'left', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}><Mail size={16} /> {user.email}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <Mail size={16} style={{ flexShrink: 0 }} /> 
+                <span style={{ wordBreak: 'break-all' }}>{user.email}</span>
+              </div>
+              <div style={{ marginLeft: '24px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                {user.isVerified ? (
+                  <span className="badge badge-success" style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem', display: 'inline-flex', gap: '4px', textTransform: 'capitalize', fontWeight: '600' }}>
+                    <CheckCircle size={10} /> Verified
+                  </span>
+                ) : (
+                  <>
+                    <span className="badge badge-danger" style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem', display: 'inline-flex', gap: '4px', textTransform: 'capitalize', fontWeight: '600' }}>
+                      <AlertOctagon size={10} /> Unverified
+                    </span>
+                    <button 
+                      onClick={() => navigate('/verify-email')} 
+                      className="btn-link"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--primary)',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem',
+                        padding: 0,
+                        textDecoration: 'underline',
+                        fontWeight: '600',
+                        transition: 'var(--transition)'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-hover)'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = 'var(--primary)'}
+                    >
+                      Verify Now
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}><Phone size={16} /> {user.phone}</div>
           </div>
         </div>
@@ -161,12 +198,48 @@ export default function Profile() {
 
             <div className="form-group">
               <label className="form-label">Email Address (Read-only)</label>
-              <input 
-                type="email" 
-                className="form-input" 
-                value={user.email} 
-                disabled 
-              />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <input 
+                  type="email" 
+                  className="form-input" 
+                  value={user.email} 
+                  disabled 
+                  style={{ opacity: 0.8, cursor: 'not-allowed' }}
+                />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  {user.isVerified ? (
+                    <span className="badge badge-success" style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem', display: 'inline-flex', gap: '4px', textTransform: 'capitalize', fontWeight: '600' }}>
+                      <CheckCircle size={10} /> Verified Email
+                    </span>
+                  ) : (
+                    <>
+                      <span className="badge badge-danger" style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem', display: 'inline-flex', gap: '4px', textTransform: 'capitalize', fontWeight: '600' }}>
+                        <AlertOctagon size={10} /> Unverified Email
+                      </span>
+                      <button 
+                        type="button"
+                        onClick={() => navigate('/verify-email')} 
+                        className="btn-link"
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--primary)',
+                          cursor: 'pointer',
+                          fontSize: '0.75rem',
+                          padding: 0,
+                          textDecoration: 'underline',
+                          fontWeight: '600',
+                          transition: 'var(--transition)'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-hover)'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--primary)'}
+                      >
+                        Verify Now
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ marginTop: '1rem' }} disabled={loading}>

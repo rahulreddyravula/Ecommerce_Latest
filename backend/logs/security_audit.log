@@ -3,3 +3,25 @@
 [2026-07-28T05:15:11.715Z] [EMAIL_VERIFICATION_SUCCESS_OTP] {"userId":"6a683ac639496b12ee78a23f"}
 [2026-07-28T05:15:41.352Z] [AUTH_SUCCESS] {"userId":"6a683ac639496b12ee78a23f","ip":"::1"}
 [2026-07-28T05:18:29.741Z] [LOGOUT_SUCCESS] {"userId":"6a683ac639496b12ee78a23f"}
+[2026-08-21T12:09:25.577Z] [TOKEN_REUSE_THEFT_DETECTED] {"userId":"6a883b9015485934c06deb19","ip":"::1","tokenHash":"3b8887607600902a3dfbddf4cbb6aa9a36b3df9c5b977810d58c80a6220a4091"}
+[2026-08-21T12:19:25.993Z] [AUTH_FAIL_NON_EXISTENT_EMAIL] {"email":"admin@example.com","ip":"::1"}
+[2026-08-21T12:20:29.108Z] [AUTH_FAIL_NON_EXISTENT_EMAIL] {"email":"admin@example.com","ip":"::1"}
+[2026-08-21T12:22:31.635Z] [USER_REGISTERED] {"userId":"6a8843071ddbf70b2cc4d006","email":"testuser@example.com","ip":"::1"}
+[2026-08-21T12:23:16.470Z] [AUTH_FAIL_UNVERIFIED_EMAIL] {"userId":"6a8843071ddbf70b2cc4d006","ip":"::1"}
+[2026-08-21T12:24:40.962Z] [AUTH_FAIL_NON_EXISTENT_EMAIL] {"email":"admin@example.com","ip":"::1"}
+[2026-08-21T12:26:01.467Z] [DUPLICATE_REGISTRATION_ATTEMPT] {"email":"testuser_gemini@example.com","phone":"+1234567890","ip":"::1"}
+[2026-08-21T12:27:02.322Z] [AUTH_FAIL_NON_EXISTENT_EMAIL] {"email":"testuser_gemini@example.com","ip":"::1"}
+[2026-08-21T12:28:47.149Z] [AUTH_FAIL_NON_EXISTENT_EMAIL] {"email":"admin@example.com","ip":"::1"}
+[2026-08-21T12:29:12.272Z] [OTP_SEND_SUCCESS] {"userId":"6a8843071ddbf70b2cc4d006","ip":"::1"}
+[2026-08-21T12:29:52.511Z] [OTP_VERIFY_FAILED] {"userId":"6a8843071ddbf70b2cc4d006","ip":"::1","error":"Invalid OTP code. You have 2 attempts remaining"}
+[2026-08-21T12:32:49.315Z] [AUTH_FAIL_NON_EXISTENT_EMAIL] {"email":"admin@example.com","ip":"::1"}
+[2026-08-21T12:34:18.299Z] [DUPLICATE_REGISTRATION_ATTEMPT] {"email":"admin_test@example.com","phone":"+1234567890","ip":"::1"}
+[2026-08-21T12:35:13.968Z] [AUTH_FAIL_NON_EXISTENT_EMAIL] {"email":"admin_test@example.com","ip":"::1"}
+[2026-08-21T12:41:24.166Z] [DUPLICATE_REGISTRATION_ATTEMPT] {"email":"test_user_abc@example.com","phone":"+1234567890","ip":"::1"}
+[2026-08-21T12:42:38.252Z] [AUTH_FAIL_NON_EXISTENT_EMAIL] {"email":"test_user_abc@example.com","ip":"::1"}
+[2026-08-21T13:33:17.687Z] [AUTH_SUCCESS] {"userId":"6a8853778bb7b85f0037e36f","ip":"::1"}
+[2026-08-21T13:36:22.848Z] [USER_REGISTERED] {"userId":"6a885456ae88418a1a19acf2","email":"laxman@gmail.com","ip":"::1"}
+[2026-08-21T13:36:59.351Z] [EMAIL_VERIFICATION_SUCCESS_OTP] {"userId":"6a885456ae88418a1a19acf2"}
+[2026-08-21T13:37:22.552Z] [AUTH_FAIL_NON_EXISTENT_EMAIL] {"email":"laxma@gmail.com","ip":"::1"}
+[2026-08-21T13:37:30.451Z] [AUTH_SUCCESS] {"userId":"6a885456ae88418a1a19acf2","ip":"::1"}
+[2026-08-21T13:37:40.853Z] [MFA_ENABLE_REQUEST] {"userId":"6a885456ae88418a1a19acf2"}
