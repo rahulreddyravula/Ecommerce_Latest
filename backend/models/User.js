@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, 'Password is required'],
-      minlength: [12, 'Password must be at least 12 characters long'], // NIST standard
+      minlength: [8, 'Password must be at least 8 characters long'], // NIST standard
       select: false // Do not expose password by default
     },
     phone: {

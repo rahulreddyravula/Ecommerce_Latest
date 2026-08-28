@@ -96,10 +96,18 @@ export default function Login() {
           state: { mfaToken: result.data.mfaToken } 
         });
       } else {
-        navigate('/');
+        if (result.data && result.data.user && !result.data.user.isVerified) {
+          navigate('/verify-email');
+        } else {
+          navigate('/');
+        }
       }
     } catch (err) {
-      setError(err.message || 'Login failed');
+      if (err.errors && err.errors.length > 0) {
+        setError(err.errors.map(e => e.message).join('\n'));
+      } else {
+        setError(err.message || 'Login failed');
+      }
       // Reset Turnstile widget on failed login
       if (window.turnstile && document.getElementById('turnstile-login-container')) {
         window.turnstile.reset('#turnstile-login-container');
@@ -176,7 +184,7 @@ export default function Login() {
         
         {/* Messages */}
         {error && (
-          <div className="badge badge-danger" style={{ display: 'block', width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-sm)', marginBottom: '1rem', textTransform: 'none', textAlign: 'center' }} role="alert">
+          <div className="badge badge-danger" style={{ display: 'block', width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-sm)', marginBottom: '1rem', textTransform: 'none', textAlign: 'center', whiteSpace: 'pre-line' }} role="alert">
             {error}
           </div>
         )}

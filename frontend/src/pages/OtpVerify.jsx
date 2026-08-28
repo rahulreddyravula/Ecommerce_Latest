@@ -107,7 +107,11 @@ export default function OtpVerify() {
       const result = await loginWithOtp(phone, fullOtp);
       if (result.success) {
         toast.success('Authenticated successfully!');
-        navigate('/');
+        if (result.data && result.data.user && !result.data.user.isVerified) {
+          navigate('/verify-email');
+        } else {
+          navigate('/');
+        }
       } else {
         toast.error(result.message || 'OTP verification failed');
       }

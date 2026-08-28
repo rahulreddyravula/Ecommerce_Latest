@@ -50,3 +50,27 @@
 [2026-08-28T10:19:46.029Z] [DUPLICATE_REGISTRATION_ATTEMPT] {"email":"testuser_3@example.com","phone":"+1234567890","ip":"::1"}
 [2026-08-28T10:20:11.311Z] [AUTH_FAIL_NON_EXISTENT_EMAIL] {"email":"testuser_3@example.com","ip":"::1"}
 [2026-08-28T10:23:02.482Z] [USER_REGISTERED] {"userId":"6a916186ead30faef94b8a70","email":"testuser_4@example.com","ip":"::1"}
+[2026-08-28T12:01:53.312Z] [USER_REGISTERED] {"userId":"6a9178b0732019bbfabd757c","email":"rakesh@gmail.com","ip":"::1"}
+[2026-08-28T12:02:18.819Z] [AUTH_SUCCESS] {"userId":"6a9178b0732019bbfabd757c","ip":"::1"}
+[2026-08-28T12:02:19.058Z] [TOKEN_REUSE_THEFT_DETECTED] {"userId":"6a9178b0732019bbfabd757c","ip":"::1","tokenHash":"bb8b58a26858cf399802a54e6398a736e485e9bf3dfe0ded56febbbbddc7989c"}
+[2026-08-28T12:03:00.725Z] [AUTH_SUCCESS] {"userId":"6a9178b0732019bbfabd757c","ip":"::1"}
+[2026-08-28T12:03:00.862Z] [TOKEN_REUSE_THEFT_DETECTED] {"userId":"6a9178b0732019bbfabd757c","ip":"::1","tokenHash":"681a67c0abb3f8abf34d7d5b90c6c6ba30ce3d0750e1eaa116ef60472fcf30d4"}
+[2026-08-28T12:05:03.311Z] [USER_REGISTERED] {"userId":"6a91796e732019bbfabd75f1","email":"testlogin@example.com","ip":"::1"}
+[2026-08-28T12:05:27.682Z] [AUTH_SUCCESS] {"userId":"6a91796e732019bbfabd75f1","ip":"::1"}
+[2026-08-28T12:05:27.948Z] [TOKEN_REUSE_THEFT_DETECTED] {"userId":"6a91796e732019bbfabd75f1","ip":"::1","tokenHash":"ea1b8a098377bed4034dce48a8ce4f7494604da2f95e67809da484ab3027f27f"}
+[2026-08-28T12:06:14.416Z] [AUTH_SUCCESS] {"userId":"6a91796e732019bbfabd75f1","ip":"::1"}
+[2026-08-28T12:06:14.656Z] [TOKEN_REUSE_THEFT_DETECTED] {"userId":"6a91796e732019bbfabd75f1","ip":"::1","tokenHash":"5c6287b3357456d744210510a2960893d0eaa166bc6e43635df673ef21cdd1a4"}
+[2026-08-28T12:06:48.043Z] [AUTH_FAIL_INCORRECT_PASSWORD] {"userId":"6a91796e732019bbfabd75f1","ip":"::1"}
+[2026-08-28T12:07:36.774Z] [OTP_SEND_SUCCESS] {"userId":"6a91796e732019bbfabd75f1","ip":"::1"}
+[2026-08-28T12:08:01.804Z] [OTP_VERIFY_FAILED] {"userId":"6a91796e732019bbfabd75f1","ip":"::1","error":"Invalid OTP code. You have 2 attempts remaining"}
+[2026-08-28T12:09:29.862Z] [AUTH_SUCCESS] {"userId":"6a91796e732019bbfabd75f1","ip":"::1"}
+[2026-08-28T12:12:31.244Z] [AUTH_SUCCESS] {"userId":"6a91796e732019bbfabd75f1","ip":"::1"}
+[2026-08-28T12:12:31.637Z] [TOKEN_REUSE_THEFT_DETECTED] {"userId":"6a91796e732019bbfabd75f1","ip":"::1","tokenHash":"667c878e866b75abfd6b781fead97f5d7a035451287ab0c4f64bd93b403d8738"}
+[2026-08-28T12:13:18.557Z] [AUTH_FAIL_NON_EXISTENT_EMAIL] {"email":"fakeuser@example.com","ip":"::1"}
+[2026-08-28T12:14:13.728Z] [AUTH_SUCCESS] {"userId":"6a91796e732019bbfabd75f1","ip":"::1"}
+[2026-08-28T12:14:13.973Z] [TOKEN_REUSE_THEFT_DETECTED] {"userId":"6a91796e732019bbfabd75f1","ip":"::1","tokenHash":"166e315aca6ecf6020b1d4185bccefee46423a874c2d9a221e6d29c3e5b2d8ed"}
+[2026-08-28T12:16:11.118Z] [AUTH_SUCCESS] {"userId":"6a9178b0732019bbfabd757c","ip":"::1"}
+[2026-08-28T12:16:17.068Z] [LOGOUT_SUCCESS] {"userId":"6a9178b0732019bbfabd757c"}
+[2026-08-28T12:16:25.694Z] [OTP_SEND_SUCCESS] {"userId":"6a9178b0732019bbfabd757c","ip":"::1"}
+[2026-08-28T12:16:36.505Z] [OTP_VERIFY_SUCCESS_LOGIN] {"userId":"6a9178b0732019bbfabd757c","ip":"::1"}
+[2026-08-28T12:16:56.234Z] [LOGOUT_SUCCESS] {"userId":"6a9178b0732019bbfabd757c"}

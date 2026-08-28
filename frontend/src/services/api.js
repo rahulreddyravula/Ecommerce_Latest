@@ -62,64 +62,81 @@ export const apiCall = async (endpoint, options = {}) => {
   try {
     const response = await fetch(url, mergedOptions);
     
-    // Check if unauthorized and try token refresh, but NOT for auth endpoints
-    if (response.status === 401 && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/refresh-token') && !endpoint.includes('/auth/verify-mfa') && !endpoint.includes('/auth/logout')) {
-      if (isRefreshing) {
-        // Enqueue request while token is refreshing
-        return new Promise((resolve, reject) => {
-          refreshQueue.push({
-            resolve: (newToken) => {
-              mergedOptions.headers['Authorization'] = `Bearer ${newToken}`;
-              resolve(apiCall(endpoint, options));
-            },
-            reject: (err) => reject(err)
-          });
-        });
+    // Parse response body first so we can check the error message and avoid clearing session on email verification checks
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      data = {};
+    }
+
+    if (response.status === 401) {
+      // If the 401 error is due to an unverified email, do NOT refresh or expire the session
+      if (data.message && data.message.includes('verify your email')) {
+        const errorObj = new Error(data.message);
+        errorObj.errors = data.errors || [];
+        throw errorObj;
       }
 
-      isRefreshing = true;
+      // Check if unauthorized and try token refresh, but NOT for auth endpoints
+      if (!endpoint.includes('/auth/login') && !endpoint.includes('/auth/refresh-token') && !endpoint.includes('/auth/verify-mfa') && !endpoint.includes('/auth/logout')) {
+        if (isRefreshing) {
+          // Enqueue request while token is refreshing
+          return new Promise((resolve, reject) => {
+            refreshQueue.push({
+              resolve: (newToken) => {
+                mergedOptions.headers['Authorization'] = `Bearer ${newToken}`;
+                resolve(apiCall(endpoint, options));
+              },
+              reject: (err) => reject(err)
+            });
+          });
+        }
 
-      try {
-        // Request token refresh
-        const refreshResponse = await fetch(`${BASE_URL}/auth/refresh-token`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Device-Fingerprint': getDeviceFingerprint()
-          }
-        });
-        
-        const refreshResult = await refreshResponse.json();
+        isRefreshing = true;
 
-        if (refreshResponse.ok && refreshResult.success && refreshResult.data.accessToken) {
-          const newToken = refreshResult.data.accessToken;
-          localStorage.setItem('token', newToken);
-          isRefreshing = false;
-          processQueue(null, newToken);
+        try {
+          // Request token refresh
+          const refreshResponse = await fetch(`${BASE_URL}/auth/refresh-token`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Device-Fingerprint': getDeviceFingerprint()
+            }
+          });
           
-          // Retry the original request with new token
-          mergedOptions.headers['Authorization'] = `Bearer ${newToken}`;
-          return apiCall(endpoint, options);
-        } else {
-          throw new Error('Refresh failed');
+          const refreshResult = await refreshResponse.json();
+
+          if (refreshResponse.ok && refreshResult.success && refreshResult.data.accessToken) {
+            const newToken = refreshResult.data.accessToken;
+            localStorage.setItem('token', newToken);
+            isRefreshing = false;
+            processQueue(null, newToken);
+            
+            // Retry the original request with new token
+            mergedOptions.headers['Authorization'] = `Bearer ${newToken}`;
+            return apiCall(endpoint, options);
+          } else {
+            throw new Error('Refresh failed');
+          }
+        } catch (refreshErr) {
+          isRefreshing = false;
+          processQueue(refreshErr, null);
+          // Clear tokens and redirect/reject
+          localStorage.removeItem('token');
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('auth_session_expired'));
+          }
+          throw new Error('Your session has expired. Please log in again.');
         }
-      } catch (refreshErr) {
-        isRefreshing = false;
-        processQueue(refreshErr, null);
-        // Clear tokens and redirect/reject
-        localStorage.removeItem('token');
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new Event('auth_session_expired'));
-        }
-        throw new Error('Your session has expired. Please log in again.');
       }
     }
 
-    const data = await response.json();
-
     if (!response.ok) {
-      throw new Error(data.message || 'API request failed');
+      const errorObj = new Error(data.message || 'API request failed');
+      errorObj.errors = data.errors || [];
+      throw errorObj;
     }
 
     return data;

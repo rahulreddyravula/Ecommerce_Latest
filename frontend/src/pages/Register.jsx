@@ -91,7 +91,11 @@ export default function Register() {
         setError(result.message || 'Registration failed');
       }
     } catch (err) {
-      setError(err.message || 'Registration failed');
+      if (err.errors && err.errors.length > 0) {
+        setError(err.errors.map(e => e.message).join('\n'));
+      } else {
+        setError(err.message || 'Registration failed');
+      }
       if (window.turnstile && document.getElementById('turnstile-register-container')) {
         window.turnstile.reset('#turnstile-register-container');
       }
@@ -108,7 +112,7 @@ export default function Register() {
         </h2>
 
         {error && (
-          <div className="badge badge-danger" style={{ display: 'block', width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-sm)', marginBottom: '1rem', textTransform: 'none', textAlign: 'center' }} role="alert">
+          <div className="badge badge-danger" style={{ display: 'block', width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-sm)', marginBottom: '1rem', textTransform: 'none', textAlign: 'center', whiteSpace: 'pre-line' }} role="alert">
             {error}
           </div>
         )}
@@ -163,11 +167,11 @@ export default function Register() {
                 id="register-password"
                 type={showPassword ? 'text' : 'password'}
                 className="form-input"
-                placeholder="At least 12 characters"
+                placeholder="At least 8 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={12}
+                minLength={8}
                 disabled={loading}
                 style={{ paddingRight: '3rem', width: '100%' }}
               />
@@ -193,7 +197,7 @@ export default function Register() {
               </button>
             </div>
             <small style={{ color: 'var(--text-secondary)', fontSize: '0.78rem', marginTop: '0.25rem', display: 'block' }}>
-              Must contain 12+ chars, an uppercase/lowercase letter, a digit, and a special character.
+              Must contain 8+ chars, an uppercase/lowercase letter, a digit, and a special character.
             </small>
           </div>
 
