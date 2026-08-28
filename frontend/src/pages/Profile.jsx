@@ -1,11 +1,124 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Phone, Shield, UserCheck, AlertOctagon, CheckCircle } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import { User, Mail, Phone, Shield, UserCheck, AlertOctagon, CheckCircle, RefreshCw } from 'lucide-react';
 
 export default function Profile() {
-  const { user, updateProfile, uploadAvatar } = useAuth();
+  const { user, updateProfile, uploadAvatar, verifyEmailAddress, resendEmailVerification } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
+  
+  // Inline Email Verification states
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [sendingCode, setSendingCode] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  const inputRefs = useRef([]);
+
+  // Resend cooldown timer
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const interval = setInterval(() => {
+      setResendCooldown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [resendCooldown]);
+
+  const handleOtpChange = (e, index) => {
+    const val = e.target.value.replace(/\D/g, '').slice(-1);
+    const newValues = [...otpValues];
+    newValues[index] = val;
+    setOtpValues(newValues);
+
+    if (val && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (e, index) => {
+    if (e.key === 'Backspace') {
+      if (!otpValues[index] && index > 0) {
+        const newValues = [...otpValues];
+        newValues[index - 1] = '';
+        setOtpValues(newValues);
+        inputRefs.current[index - 1]?.focus();
+      } else {
+        const newValues = [...otpValues];
+        newValues[index] = '';
+        setOtpValues(newValues);
+      }
+    }
+  };
+
+  const handleOtpPaste = (e) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (pastedText) {
+      const newValues = [...otpValues];
+      for (let i = 0; i < 6; i++) {
+        newValues[i] = pastedText[i] || '';
+      }
+      setOtpValues(newValues);
+      const nextFocus = Math.min(pastedText.length, 5);
+      inputRefs.current[nextFocus]?.focus();
+    }
+  };
+
+  const handleSendVerificationCode = async () => {
+    if (resendCooldown > 0 || sendingCode) return;
+    setSendingCode(true);
+    try {
+      const result = await resendEmailVerification(user.email);
+      if (result.success) {
+        toast.success(result.message || 'Verification code sent successfully!');
+        setResendCooldown(60);
+        setShowOtpInput(true);
+        setTimeout(() => inputRefs.current[0]?.focus(), 100);
+      } else {
+        toast.error(result.message || 'Could not send verification code.');
+      }
+    } catch (err) {
+      toast.error(err.message || 'Failed to send verification code.');
+    } finally {
+      setSendingCode(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    const otp = otpValues.join('');
+    if (otp.length !== 6) {
+      toast.error('Please enter the full 6-digit code');
+      return;
+    }
+    setVerifyingOtp(true);
+    try {
+      const result = await verifyEmailAddress({ email: user.email, otp });
+      if (result.success) {
+        toast.success('Email verified successfully!');
+        setShowOtpInput(false);
+        setOtpValues(['', '', '', '', '', '']);
+      } else {
+        toast.error(result.message || 'Verification failed.');
+      }
+    } catch (err) {
+      toast.error(err.message || 'Verification failed. Please check the code.');
+      setOtpValues(['', '', '', '', '', '']);
+      setTimeout(() => inputRefs.current[0]?.focus(), 100);
+    } finally {
+      setVerifyingOtp(false);
+    }
+  };
+
+  const handleVerifyNowClick = () => {
+    const emailField = document.getElementById('email-field-container');
+    if (emailField) {
+      emailField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    handleSendVerificationCode();
+  };
   
   // Profile update form states
   const [name, setName] = useState(user?.name || '');
@@ -140,7 +253,8 @@ export default function Profile() {
                       <AlertOctagon size={10} /> Unverified
                     </span>
                     <button 
-                      onClick={() => navigate('/verify-email')} 
+                      onClick={handleVerifyNowClick} 
+                      disabled={sendingCode}
                       className="btn-link"
                       style={{
                         background: 'none',
@@ -156,7 +270,7 @@ export default function Profile() {
                       onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-hover)'}
                       onMouseLeave={(e) => e.currentTarget.style.color = 'var(--primary)'}
                     >
-                      Verify Now
+                      {sendingCode ? 'Sending...' : 'Verify Now'}
                     </button>
                   </>
                 )}
@@ -196,7 +310,7 @@ export default function Profile() {
               />
             </div>
 
-            <div className="form-group">
+            <div className="form-group" id="email-field-container">
               <label className="form-label">Email Address (Read-only)</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <input 
@@ -216,29 +330,114 @@ export default function Profile() {
                       <span className="badge badge-danger" style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem', display: 'inline-flex', gap: '4px', textTransform: 'capitalize', fontWeight: '600' }}>
                         <AlertOctagon size={10} /> Unverified Email
                       </span>
-                      <button 
-                        type="button"
-                        onClick={() => navigate('/verify-email')} 
-                        className="btn-link"
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: 'var(--primary)',
-                          cursor: 'pointer',
-                          fontSize: '0.75rem',
-                          padding: 0,
-                          textDecoration: 'underline',
-                          fontWeight: '600',
-                          transition: 'var(--transition)'
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-hover)'}
-                        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--primary)'}
-                      >
-                        Verify Now
-                      </button>
+                      {!showOtpInput ? (
+                        <button 
+                          type="button"
+                          onClick={handleSendVerificationCode} 
+                          disabled={sendingCode}
+                          className="btn-link"
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--primary)',
+                            cursor: 'pointer',
+                            fontSize: '0.75rem',
+                            padding: 0,
+                            textDecoration: 'underline',
+                            fontWeight: '600',
+                            transition: 'var(--transition)'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary-hover)'}
+                          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--primary)'}
+                        >
+                          {sendingCode ? 'Sending...' : 'Verify Now'}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowOtpInput(false);
+                            setOtpValues(['', '', '', '', '', '']);
+                          }}
+                          className="btn-link"
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--text-secondary)',
+                            cursor: 'pointer',
+                            fontSize: '0.75rem',
+                            padding: 0,
+                            textDecoration: 'underline',
+                            fontWeight: '600',
+                            transition: 'var(--transition)'
+                          }}
+                        >
+                          Cancel Verification
+                        </button>
+                      )}
                     </>
                   )}
                 </div>
+                {showOtpInput && !user.isVerified && (
+                  <div style={{
+                    marginTop: '1rem',
+                    padding: '1.25rem',
+                    background: 'var(--bg-card-hover)',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border)',
+                    animation: 'fadeIn 0.3s ease'
+                  }}>
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: '600', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Mail size={14} color="var(--primary)" />
+                      Enter 6-Digit Verification Code
+                    </h4>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '1rem' }}>
+                      A verification code was sent to {user.email}. Enter it below:
+                    </p>
+
+                    <div className="profile-otp-container">
+                      {otpValues.map((value, idx) => (
+                        <input
+                          key={idx}
+                          type="text"
+                          pattern="\d*"
+                          maxLength={1}
+                          value={value}
+                          ref={(el) => (inputRefs.current[idx] = el)}
+                          onChange={(e) => handleOtpChange(e, idx)}
+                          onKeyDown={(e) => handleOtpKeyDown(e, idx)}
+                          onPaste={handleOtpPaste}
+                          disabled={verifyingOtp}
+                          className="otp-digit-input"
+                          onFocus={(e) => e.target.select()}
+                          aria-label={`Digit ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '1rem' }}>
+                      <button
+                        type="button"
+                        onClick={handleVerifyOtp}
+                        disabled={verifyingOtp || !otpValues.every(val => val !== '')}
+                        className="btn btn-primary"
+                        style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', flex: 1 }}
+                      >
+                        {verifyingOtp ? 'Verifying...' : 'Verify Code'}
+                      </button>
+                      
+                      <button
+                        type="button"
+                        onClick={handleSendVerificationCode}
+                        disabled={resendCooldown > 0 || sendingCode}
+                        className="btn btn-secondary"
+                        style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', whiteSpace: 'nowrap' }}
+                      >
+                        {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

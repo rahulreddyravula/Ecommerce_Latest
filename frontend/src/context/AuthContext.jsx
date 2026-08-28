@@ -92,6 +92,9 @@ export const AuthProvider = ({ children }) => {
       method: 'POST',
       body: JSON.stringify(payload)
     });
+    if (data.success && token) {
+      await fetchProfile(token); // refresh user state (isVerified will become true)
+    }
     return data;
   };
 

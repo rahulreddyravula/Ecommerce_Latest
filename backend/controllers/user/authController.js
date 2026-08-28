@@ -223,11 +223,11 @@ export const login = async (req, res, next) => {
       return next(new ErrorResponse('Your account is blocked. Contact support.', 403));
     }
 
-    // Check email verification status
-    if (!user.isVerified) {
-      logSecurityEvent('AUTH_FAIL_UNVERIFIED_EMAIL', { userId: user._id, ip: req.ip });
-      return next(new ErrorResponse('Please verify your email address to activate your account.', 401));
-    }
+    // Check email verification status (allowed to log in, verification can be done inline in Profile)
+    // if (!user.isVerified) {
+    //   logSecurityEvent('AUTH_FAIL_UNVERIFIED_EMAIL', { userId: user._id, ip: req.ip });
+    //   return next(new ErrorResponse('Please verify your email address to activate your account.', 401));
+    // }
 
     // Reset login attempts on successful credentials match
     user.loginAttempts = 0;

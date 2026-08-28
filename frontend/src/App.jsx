@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
 
 // Contexts
 import { ToastProvider } from './context/ToastContext';
@@ -11,6 +12,7 @@ import { SocketProvider } from './context/SocketContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ChatWidget from './components/ChatWidget';
+import NetworkStatus from './components/NetworkStatus';
 
 // Pages
 import Home from './pages/Home';
@@ -42,6 +44,7 @@ function App() {
           <CartProvider>
             <SocketProvider>
               <div className="app-container">
+                <NetworkStatus />
                 <Header />
                 
                 <div className="content-wrap">

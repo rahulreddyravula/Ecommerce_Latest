@@ -23,7 +23,7 @@ const run = async () => {
       { name: 'Electronics', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80' },
       { name: 'Apparel', image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=500&q=80' },
       { name: 'Home & Office', image: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80' },
-      { name: 'Accessories', image: 'https://images.unsplash.com/photo-1627124089670-0e39d73af587?w=500&q=80' }
+      { name: 'Accessories', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80' }
     ];
 
     for (const update of categoryUpdates) {

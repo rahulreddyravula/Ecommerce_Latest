@@ -49,7 +49,7 @@ const categoriesData = [
     name: 'Accessories',
     slug: slugify('Accessories'),
     description: 'Leather wallets, backpacks, and mechanical watch straps.',
-    image: 'https://images.unsplash.com/photo-1627124089670-0e39d73af587?w=500&q=80',
+    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80',
     status: 'active'
   }
 ];

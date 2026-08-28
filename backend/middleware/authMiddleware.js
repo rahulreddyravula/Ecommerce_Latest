@@ -30,7 +30,13 @@ export const protect = async (req, res, next) => {
       }
 
       if (!req.user.isVerified) {
-        return next(new ErrorResponse('Please verify your email address to access this resource.', 401));
+        const path = req.originalUrl.split('?')[0];
+        const isProfileOrLogout = path.startsWith('/api/v1/auth/profile') || 
+                                  path.startsWith('/api/v1/auth/logout');
+        
+        if (!isProfileOrLogout) {
+          return next(new ErrorResponse('Please verify your email address to access this resource.', 401));
+        }
       }
 
       next();

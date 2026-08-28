@@ -285,9 +285,6 @@ export default function Login() {
           <p style={{ marginBottom: '0.5rem' }}>
             Don't have an account? <Link to="/register" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Sign Up</Link>
           </p>
-          <p>
-            Unverified account? <Link to="/verify-email" style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Verify Email</Link>
-          </p>
         </div>
       </div>
     </div>

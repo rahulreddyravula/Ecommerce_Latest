@@ -84,9 +84,9 @@ export default function Register() {
     try {
       const result = await register(name, email, password, phone, botToken);
       if (result.success) {
-        toast.success(result.message || 'Account created successfully! Check your email to verify.');
-        // Redirect to email OTP verification page
-        navigate('/verify-email');
+        toast.success(result.message || 'Account created successfully! Please log in to verify your email.');
+        // Redirect to login page so they verify after logging in
+        navigate('/login');
       } else {
         setError(result.message || 'Registration failed');
       }
